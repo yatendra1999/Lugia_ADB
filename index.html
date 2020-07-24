@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+        <meta charset="UTF-8">
+        <title>Lugia ADB</title>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    </head>
+    <body style="background: #ffffff !important; overflow: hidden;">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <button class='btn btn-outline-info my-2 my-sm-0' id="routes">
+                Routes
+            </button>
+            <button class='btn btn-outline-info my-2 my-sm-0' id="teleport">
+                Teleport
+            </button>
+            <button class='btn btn-outline-info my-2 my-sm-0' id="devices">
+                Devices
+            </button>
+            <button class='btn btn-outline-info my-2 my-sm-0' id="about">
+                About
+            </button>
+        </nav>
+        
+        <div class="jumbotron jumbotron-fluid", id='about_section'>
+            <div class="container">
+                <img src="files/developer.jpg" class="rounded-circle mx-auto d-block" alt="Developer", width="180", height="180">
+                <button class="btn float-left" id="github-open"><img src="files/github.png" alt="github icon" class='rounded-circle', height="50", width="50"></button>
+                <button class="btn float-right" id="discord-open"><img src="files/discord.png" alt="discord icon", class='rounded-circle', height="60", width="60"></button>
+                <br>
+                <br>
+                <br>
+            </div>
+        </div>
+
+        <div class="jumbotron jumbotron-fluid", id='teleport_section'>
+            <div class="container">
+                <h1 class="display-4">Teleport</h1>
+                <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+            </div>
+        </div>
+
+        <div class="jumbotron jumbotron-fluid", id='routes_section'>
+            <div class="container">
+                <h1 class="display-4">Routes</h1>
+                <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+            </div>
+        </div>
+
+
+        <div class="jumbotron jumbotron-fluid", id='devices_section'>
+            <div class="container">
+                <h1 class="display-4">Devices</h1>
+                <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+            </div>
+        </div>
+
+        <script src="index.js"></script>
+        <script src="jquery-3.5.1.js"></script>
+        <script src="popper/umd/popper.min.js"></script>
+        <script src="bootstrap/js/bootstrap.min.js"></script>
+    </body>
+</html>

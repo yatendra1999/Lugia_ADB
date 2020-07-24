@@ -1,0 +1,26 @@
+{
+  "name": "lugia_adb",
+  "version": "1.0.0",
+  "description": "ADB coordinates bot",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yatendra1999/Lugia_ADB.git"
+  },
+  "author": "Yatendra Singh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yatendra1999/Lugia_ADB/issues"
+  },
+  "homepage": "https://github.com/yatendra1999/Lugia_ADB#readme",
+  "devDependencies": {
+    "electron": "^9.1.1"
+  },
+  "dependencies": {
+    "python-shell": "^2.0.1"
+  }
+}
