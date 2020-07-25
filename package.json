@@ -30,7 +30,7 @@
       ]
     },
     "linux": {
-      "icon" : "icon.png",
+      "icon" : "icons/ico.png",
       "target": [
         "AppImage",
         "deb"

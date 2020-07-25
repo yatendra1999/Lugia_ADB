@@ -73,58 +73,79 @@ const form = document.getElementById("Fly-coord")
 form.addEventListener('submit',function(event){
     event.preventDefault();
     entered_coords = event.target[0].value;
-    // console.log(entered_coords)
-    let options = {
-        mode: 'text',
-        pythonOptions: ['-u']
-    };
-    console.log(options)
-    if(current_coords == -1){
+    console.log(event)
+    if (event.target[1].checked == true){
+        fly_path = path.join(__dirname,"fly.py")
         current_coords = entered_coords;
+        current_coords = entered_coords;
+        temp = current_coords.split(',');
+        document.getElementById("curr_lat").innerText = "Latitude : " + temp[0];
+        document.getElementById("curr_lon").innerText = "Longitude : " + temp[1];
+        options = {
+            mode: 'text',
+            pythonOptions: ['-u']
+        };
+        options.args = ['fly', current_coords]
+        PythonShell.run(fly_path, options, function(err){
+            if (err) throw err;
+        })
     }
-    options.args = ['getcd', entered_coords, current_coords]
-    console.log(options.args)
-    fly_path = path.join(__dirname,"fly.py")
-    PythonShell.run(fly_path, options, function(err, results){
-        if (err) throw err;
-        console.log(results);
-        cd = JSON.parse(results[0]);
-        cd = cd.cooldown;
-        cd = cd * 10;
-        let counter = 0;
-        // console.log(cd)
-        cd_bar = document.getElementById('cooldown_bar');
-        cd_bar.style.display = 'flex';
-        var per = 0
-        cd_bar.style.width = per+"%";
-        function update_progress(){
-            cd_bar.style.width = per+"%";
-            per += 1;
-            console.log("progress: "+per+"%");
-            if(per<100){
-                setTimeout(update_progress,cd);
-            }
-            else{
-                //[todo] : call actual fly 
-                current_coords = entered_coords;
-                temp = current_coords.split(',');
-                console.log("Cooldown over!")
-                console.log(temp)
-                document.getElementById("curr_lat").innerText = "Latitude : " + temp[0];
-                document.getElementById("curr_lon").innerText = "Longitude : " + temp[1];
-                cd_bar.style.display = 'none';
-                options = {
-                    mode: 'text',
-                    pythonOptions: ['-u']
-                };
-                options.args = ['fly', current_coords]
-                PythonShell.run(fly_path, options, function(err){
-                    if (err) throw err;
-                })
-            }
+    else{
+        let options = {
+            mode: 'text',
+            pythonOptions: ['-u']
+        };
+        console.log(options)
+        if(current_coords == -1){
+            current_coords = entered_coords;
         }
-        setTimeout(update_progress,cd)
-    })
+        options.args = ['getcd', entered_coords, current_coords]
+        console.log(options.args)
+        fly_path = path.join(__dirname,"fly.py")
+        PythonShell.run(fly_path, options, function(err, results){
+            if (err) throw err;
+            console.log(results);
+            cd = JSON.parse(results[0]);
+            cd = cd.cooldown;
+            cd = cd * 10;
+            let counter = 0;
+            // console.log(cd)
+            cd_bar = document.getElementById('cooldown_bar');
+            cd_bar.style.display = 'flex';
+            var per = 0
+            cd_bar.style.width = per+"%";
+            function update_progress(){
+                cd_bar.style.width = per+"%";
+                per += 1;
+                console.log("progress: "+per+"%");
+                if(per<100){
+                    setTimeout(update_progress,cd);
+                }
+                else{
+                    //[todo] : call actual fly 
+                    current_coords = entered_coords;
+                    temp = current_coords.split(',');
+                    console.log("Cooldown over!")
+                    console.log(temp)
+                    document.getElementById("curr_lat").innerText = "Latitude : " + temp[0];
+                    document.getElementById("curr_lon").innerText = "Longitude : " + temp[1];
+                    cd_bar.style.display = 'none';
+                    options = {
+                        mode: 'text',
+                        pythonOptions: ['-u']
+                    };
+                    options.args = ['fly', current_coords]
+                    PythonShell.run(fly_path, options, function(err){
+                        if (err) throw err;
+                    })
+                }
+            }
+            setTimeout(update_progress,cd)
+        })
+    }
+
+    // console.log(entered_coords)
+    
 })
 
 
