@@ -21,7 +21,46 @@
                 About
             </button>
         </nav>
-        
+
+        <div class="jumbotron jumbotron-fluid", id='teleport_section'>
+            <div class="progress", id="cooldown_bar", style="display: none;">
+                <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Cooldown</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Fly To
+                        </div>
+                        <div class="card-body">
+                            <div class="container">
+                                <form id="Fly-coord">
+                                    <div class="form-group">
+                                        <label for="coordinates">Coordinates</label>
+                                        <input class="form-control" id="new_coordinates">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Current Location
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text", id="curr_lat">Latitude  : N/A</p>
+                            <p class="card-text", id="curr_lon">Longitude : N/A</p>
+                            <!-- [TODO]: add a link to google maps or maybe some other service -->
+                            <a href="#" class="card-link">Card link</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="jumbotron jumbotron-fluid", id='about_section'>
             <div class="container">
                 <img src="files/developer.jpg" class="rounded-circle mx-auto d-block" alt="Developer", width="180", height="180">
@@ -33,26 +72,25 @@
             </div>
         </div>
 
-        <div class="jumbotron jumbotron-fluid", id='teleport_section'>
-            <div class="container">
-                <h1 class="display-4">Teleport</h1>
-                <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
-            </div>
-        </div>
-
         <div class="jumbotron jumbotron-fluid", id='routes_section'>
             <div class="container">
                 <h1 class="display-4">Routes</h1>
-                <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+                <p class="lead">Using special routes for field quests.</p>
+                <h4>Coming Soon</h4>
             </div>
         </div>
 
 
         <div class="jumbotron jumbotron-fluid", id='devices_section'>
-            <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light">
                 <h1 class="display-4">Devices</h1>
-                <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
-            </div>
+                <p class="lead">Get info on ADB devices and manage ADB devices over WiFi.</p>
+                <h4>Coming Soon</h4>
+                <!-- <div id='adb_list', class="container"></div>
+                <div class="container"><button class="btn btn-info btn-lg float-right", id="refresh-adb">
+                    <img src="files/refresh.png", alt="refresh", height="30", width="30">
+                </button></div> -->
+            </nav>
         </div>
 
         <script src="index.js"></script>

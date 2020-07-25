@@ -1,24 +1,63 @@
 {
-  "name": "lugia_adb",
+  "name": "Lugia_ADB",
   "version": "1.0.0",
   "description": "ADB coordinates bot",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.electron.Lugia_adb",
+    "asar": false,
+    "mac":{
+      "icon": "icon.png"
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "icon" : "icon.png",
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "NSIS",
+      "icon": "build/icon.ico"
+    }
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yatendra1999/Lugia_ADB.git"
   },
-  "author": "Yatendra Singh",
+  "author":{
+    "name": "Yatendra Singh",
+    "email": "yatendra1999luffy@gmail.com",
+    "url": "https://github.com/yatendra1999"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/yatendra1999/Lugia_ADB/issues"
   },
   "homepage": "https://github.com/yatendra1999/Lugia_ADB#readme",
   "devDependencies": {
-    "electron": "^9.1.1"
+    "electron": "^9.1.1",
+    "electron-builder": "^22.7.0"
   },
   "dependencies": {
     "python-shell": "^2.0.1"
