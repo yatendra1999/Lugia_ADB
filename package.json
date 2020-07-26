@@ -11,7 +11,7 @@
   },
   "build": {
     "appId": "com.electron.Lugia_adb",
-    "asar": false,
+    "asar" : false,
     "mac":{
       "icon": "icon.png"
     },
@@ -37,8 +37,8 @@
       ]
     },
     "win": {
-      "target": "NSIS",
-      "icon": "build/icon.ico"
+      "target": "portable",
+      "icon": "files/icon.png"
     }
   },
   "repository": {
