@@ -38,7 +38,7 @@
     },
     "win": {
       "target": "portable",
-      "icon": "files/icon.png"
+      "icon": "files/icon.ico"
     }
   },
   "repository": {

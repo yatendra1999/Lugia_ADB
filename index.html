@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
     <head>
         <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
@@ -27,7 +27,8 @@
                 <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Cooldown</div>
             </div>
             <div class="row">
-                <div class="col-sm-6">
+                <div class="card-group w-100">
+                    
                     <div class="card">
                         <div class="card-header">
                             Fly To
@@ -48,8 +49,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-6">
+                    
                     <div class="card">
                         <div class="card-header">
                             Current Location
@@ -63,16 +63,21 @@
                     </div>
                 </div>
             </div>
+            <br>
+            <br>
+            <br>
+            <br>
         </div>
 
         <div class="jumbotron jumbotron-fluid", id='about_section'>
             <div class="container">
                 <img src="files/developer.jpg" class="rounded-circle mx-auto d-block" alt="Developer", width="180", height="180">
+                <br>
+                <br>
+                <br>
+                <br>
                 <button class="btn float-left" id="github-open"><img src="files/github.png" alt="github icon" class='rounded-circle', height="50", width="50"></button>
                 <button class="btn float-right" id="discord-open"><img src="files/discord.png" alt="discord icon", class='rounded-circle', height="60", width="60"></button>
-                <br>
-                <br>
-                <br>
             </div>
         </div>
 
@@ -81,20 +86,69 @@
                 <h1 class="display-4">Routes</h1>
                 <p class="lead">Using special routes for field quests.</p>
                 <h4>Coming Soon</h4>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
             </div>
         </div>
 
 
         <div class="jumbotron jumbotron-fluid", id='devices_section'>
-            <nav class="navbar navbar-expand-lg navbar-light">
-                <h1 class="display-4">Devices</h1>
-                <p class="lead">Get info on ADB devices and manage ADB devices over WiFi.</p>
-                <h4>Coming Soon</h4>
-                <!-- <div id='adb_list', class="container"></div>
-                <div class="container"><button class="btn btn-info btn-lg float-right", id="refresh-adb">
-                    <img src="files/refresh.png", alt="refresh", height="30", width="30">
-                </button></div> -->
-            </nav>
+            <p id="active_device" style="display: none;"></p>
+            <div class="card-group w-100">
+                <div class="card text-center">
+                    <div class="card-header">
+                        <button class="btn btn-info", id="refresh-adb">
+                            Refresh Devices
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group", id="adb_list">
+                            Empty
+                        </div>
+                    </div>
+                </div>
+                <div class="card text-center">
+                    <div class="card-header">
+                        <a class="nav-link">WiFi devices</a>  
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group text-center">
+                            <form class="form-inline" id="tcpip_add">
+                                <div class="form-group mx-sm-3 mb-2">
+                                    <label for="ip_addr" class="sr-only">IP address</label>
+                                    <input class="form-control" id="ip_addr" placeholder="IP address">
+                                </div>
+                                <button type="submit" class="btn btn-primary mb-2">Connect</button>
+                            </form>
+                        </div>
+                        <div class="list-group", id="tcpip_list">
+                        </div>
+                    </div>
+                </div>
+                <div class="card text-center">
+                    <div class="card-header">
+                        <a class="nav-link">Active Device Info:</a>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group", id="adb_info">
+                            N/A
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
         </div>
 
         <script src="index.js"></script>

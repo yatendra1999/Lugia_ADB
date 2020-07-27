@@ -4,8 +4,8 @@ const { remote } = require('electron')
 function createWindow () {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 600,
-    height: 380,
+    width: 830,
+    height: 500,
     resizable: false,
     show: false,
     webPreferences: {
