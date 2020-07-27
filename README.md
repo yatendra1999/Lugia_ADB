@@ -26,6 +26,10 @@ Also App Ninja's joystick application must be installed on your device.
     2. You have the correct joystick application installed.
     3. You have selected an actual device in devices section after refreshing devices.
 
+## Cannot connect device over wifi:
+    1. Verify if adb is enabled in tcpip mode.
+        To enable it in tcpip mode, connect normally through usb and run "adb tcpip 5555" to restart in tcpip mode with port 5555.
+
 # Screenshot
 Teleport:
 ![image](files/teleport.png)
