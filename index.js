@@ -1,9 +1,13 @@
-const {remote, Tray, shell} = require('electron')
-const {PythonShell} = require('python-shell')
+const {remote, Tray, shell} = require('electron');
+const dialog = remote.dialog;
+const {PythonShell} = require('python-shell');
 const path = require('path');
-const exec = require('child_process').exec
-const fs = require('fs')
+const exec = require('child_process').exec;
+const fs = require('fs');
+const { count } = require('console');
 
+
+// devices section start
 function set_info(element){
     var device_id = element.id;
     active_device = document.getElementById("active_device").innerHTML;
@@ -157,12 +161,14 @@ function add_wifi_device(address){
 refresh_adb = document.getElementById('refresh-adb');
 refresh_adb.addEventListener('click',refresh_devices);
 
+//devices section end
+
 
 // complete fly section javascript is managed here
-current_coords = -1
 
 const form = document.getElementById("Fly-coord")
 form.addEventListener('submit',function(event){
+    current_coords = document.getElementById("global_coords").innerHTML;
     event.preventDefault();
     active_device = document.getElementById("active_device").innerHTML;
     var hex = /^[0-9A-Fa-f]+$/;
@@ -173,25 +179,18 @@ form.addEventListener('submit',function(event){
         entered_coords = event.target[0].value;
         console.log(event);
         if (event.target[1].checked == true){
-            // fly_path = path.join(__dirname,"fly.py")
             current_coords = entered_coords;
             temp = current_coords.split(',');
             document.getElementById("curr_lat").innerText = "Latitude : " + temp[0];
             document.getElementById("curr_lon").innerText = "Longitude : " + temp[1];
-            // options = {
-            //     mode: 'text',
-            //     pythonOptions: ['-u']
-            // };
-            // options.args = ['fly', current_coords]
-            // PythonShell.run(fly_path, options, function(err, results){
-            //     if (err) throw err;
-            //     console.log(results[0]);
-            // })
             fly_command = cmd_path+"adb -s " + active_device + " shell am start-foreground-service -a theappninjas.gpsjoystick.TELEPORT --ef lat " + temp[0] + " --ef lng " + temp[1];
             child = exec(fly_command, function(err, stdout, stderr){
                 if (err) throw err;
                 console.log(stdout);
             })
+            document.getElementById("global_coords").innerHTML = current_coords;
+            document.getElementById("route_current_location").innerHTML = "Current coords: "+current_coords;
+
         }
         else{
             let options = {
@@ -199,7 +198,7 @@ form.addEventListener('submit',function(event){
                 pythonOptions: ['-u']
             };
             console.log(options)
-            if(current_coords == -1){
+            if(current_coords == "-1"){
                 current_coords = entered_coords;
             }
             options.args = ['getcd', entered_coords, current_coords]
@@ -228,27 +227,19 @@ form.addEventListener('submit',function(event){
                         current_coords = entered_coords;
                         temp = current_coords.split(',');
                         console.log("Cooldown over!")
-                        // console.log(temp)
                         document.getElementById("curr_lat").innerText = "Latitude : " + temp[0];
                         document.getElementById("curr_lon").innerText = "Longitude : " + temp[1];
                         cd_bar.style.display = 'none';
-                        // options = {
-                        //     mode: 'text',
-                        //     pythonOptions: ['-u']
-                        // };
-                        // options.args = ['fly', current_coords]
-                        // PythonShell.run(fly_path, options, function(err, results){
-                        //     if (err) throw err;
-                        //     console.log(results[0]);
-                        // })
                         fly_command = cmd_path+"adb -s " + active_device + " shell am start-foreground-service -a theappninjas.gpsjoystick.TELEPORT --ef lat " + temp[0] + " --ef lng " + temp[1];
                         child = exec(fly_command, function(err, stdout, stderr){
                             if (err) throw err;
                             console.log(stdout);
                         })
+                        document.getElementById("global_coords").innerHTML = current_coords;
+                        document.getElementById("route_current_location").innerHTML = "Current coords: "+current_coords;
                     }
                 }
-                setTimeout(update_progress,cd)
+                setTimeout(update_progress,cd);
             })
         }
     }
@@ -260,6 +251,221 @@ form.addEventListener('submit',function(event){
     // console.log(entered_coords)
     
 })
+//teleport section end
+
+
+
+//routes section start
+
+function unhide_options(){
+    document.getElementById('route_cancel').style.display = "inline-block";
+    document.getElementById('route_skip_next').style.display = "inline-block";
+    document.getElementById('route_jump_next').style.display = "inline-block";
+}
+function hide_options(){
+    document.getElementById('route_cancel').style.display = "none";
+    document.getElementById('route_skip_next').style.display = "none";
+    document.getElementById('route_jump_next').style.display = "none";
+}
+
+function remove_listeners(){
+
+    var old_element = document.getElementById("route_cancel");
+    var new_element = old_element.cloneNode(true);
+    old_element.parentNode.replaceChild(new_element, old_element);
+
+    var old_element = document.getElementById("route_skip_next");
+    var new_element = old_element.cloneNode(true);
+    old_element.parentNode.replaceChild(new_element, old_element);
+
+    var old_element = document.getElementById("route_jump_next");
+    var new_element = old_element.cloneNode(true);
+    old_element.parentNode.replaceChild(new_element, old_element);
+}
+
+function exit_route(){
+    console.log("Exiting the route")
+    hide_options();
+    document.getElementById('route_active').innerHTML = 'false';
+    document.getElementById('load_routes').disabled = false;
+    document.getElementById("route_next_stop_info").innerHTML = "Next Stop : N/A";
+}
+
+function route_skipper(coord_list, count){
+    console.log("skipping route");
+    count = count + 1;
+    remove_listeners();
+
+    if(coord_list.length > count){
+        set_cooldown(coord_list, count);
+    }
+    else{
+        exit_route();
+    }
+}
+
+function jump_next(coord_list, count){
+    console.log("Jumping to next");
+    remove_listeners();
+
+    hide_options();
+
+    if(coord_list.length > count){
+        active_device = document.getElementById("active_device").innerHTML;
+        cmd_path = ("cd "+__dirname+" &&");
+    
+        last_coord = coord_list[count-1];
+        // console.log(count-1);
+        // console.log(last_coord);
+        next_coord = coord_list[count];
+    
+        let options = {
+            mode: 'text',
+            pythonOptions: ['-u']
+        };
+        options.args = ['getcd', last_coord, next_coord];
+        fly_path = path.join(__dirname,"fly.py");
+    
+        PythonShell.run(fly_path, options, function(err, results){
+            if(err) throw err;
+            cd = JSON.parse(results[0]);
+            cd = cd.cooldown;
+            cd = cd * 10;
+            cd_bar = document.getElementById('route_cooldown_bar');
+            cd_bar.style.display = 'flex';
+            var per = 0;
+            cd_bar.style.width = per+"%";
+            function update_progress(){
+                cd_bar.style.width = per+"%";
+                per += 1;
+                console.log("progress: "+per+"%");
+                if(per<100){
+                    setTimeout(update_progress,cd);
+                }
+                else{
+                    temp = next_coord.split(',');
+                    console.log("Cooldown over!")
+                    cd_bar.style.display = 'none';
+                    fly_command = cmd_path+"adb -s " + active_device + " shell am start-foreground-service -a theappninjas.gpsjoystick.TELEPORT --ef lat " + temp[0] + " --ef lng " + temp[1];
+                    child = exec(fly_command, function(err, stdout, stderr){
+                        if (err) throw err;
+                        // console.log(stdout);
+                    })
+                    document.getElementById("global_coords").innerHTML = next_coord;
+                    child.on('exit', function(){
+                        count = count + 1;
+                        set_cooldown(coord_list, count);
+                        document.getElementById("route_current_location").innerHTML = "Current coords: " + next_coord;
+                        temp = next_coord.split(',');
+                        document.getElementById("curr_lat").innerText = "Latitude : " + temp[0];
+                        document.getElementById("curr_lon").innerText = "Longitude : " + temp[1];
+                    })
+                }
+            }
+            setTimeout(update_progress,cd);
+        })
+    }
+    else{
+        exit_route();
+    }
+
+   
+}
+
+function set_cooldown(coord_list, count){
+    console.log(count);
+    next_coord = coord_list[count];
+
+    document.getElementById("route_next_stop_info").innerHTML = "Next Stop : " + next_coord;
+    unhide_options();
+
+    document.getElementById('route_cancel').addEventListener('click', exit_route);
+    document.getElementById('route_skip_next').addEventListener('click', route_skipper.bind(this,coord_list, count));
+    document.getElementById('route_jump_next').addEventListener('click', jump_next.bind(this,coord_list, count));
+}
+
+function start_jumping(coord_list){
+    // console.log(valid_list);
+    console.log("started route!");
+    active_device = document.getElementById("active_device").innerHTML;
+    var hex = /^[0-9A-Fa-f]+$/;
+    var ip = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    var cmd_path = ("cd "+__dirname+" &&");
+    if(hex.test(active_device) || ip.test(active_device)){
+        var count = 0;
+        current_coords = coord_list[count];
+        console.log(current_coords);
+        temp = current_coords.split(',');
+        fly_command = cmd_path+"adb -s " + active_device + " shell am start-foreground-service -a theappninjas.gpsjoystick.TELEPORT --ef lat " + temp[0] + " --ef lng " + temp[1];
+        child = exec(fly_command, function(err, stdout, stderr){
+            if (err) throw err;
+            // console.log(stdout);
+        })
+        document.getElementById("global_coords").innerHTML = current_coords;
+        document.getElementById("route_current_location").innerHTML = "Current coords: "+current_coords;
+        temp = current_coords.split(',');
+        document.getElementById("curr_lat").innerText = "Latitude : " + temp[0];
+        document.getElementById("curr_lon").innerText = "Longitude : " + temp[1];
+        count += 1;
+        if(coord_list.length > count){
+            // console.log(coord_list.length);
+            set_cooldown(coord_list, count);
+        }
+        else{
+            // console.log(coord_list.length);
+            // console.log(count);
+            exit_route();
+        }
+    }
+    else{
+        console.log("No device selected!");
+        exit_route();
+    }
+
+}
+
+function start_route(){
+    if(document.getElementById('route_active').innerHTML == "false"){
+        file = dialog.showOpenDialogSync();
+        if(file){
+            document.getElementById('load_routes').disabled = true;
+            console.log(file);
+            file = file[0];
+            coord_list = fs.readFileSync(file, {encoding:'utf-8', flag:'r'});
+            console.log(coord_list);
+            coord_list = coord_list.split("\n");
+            console.log(coord_list);
+            coord_re = /^(-?\d+(\.\d+)?),(-?\d+(\.\d+)?)\s*$/;
+            valid_list = [];
+            for( coord_idx in coord_list){
+                val = coord_list[coord_idx];
+                if (coord_re.test(val)){
+                    console.log("valid : " + val);
+                    valid_list.push(val);
+                }
+                else{
+                    console.log("invalid : "+ val);
+                }
+            }
+            var prev_coord = document.getElementById("global_coords").innerHTML;
+            if(prev_coord != '-1'){
+                valid_list.unshift(prev_coord);
+            }
+            start_jumping(valid_list);
+        }
+        else{
+            console.log("No file specified!")
+        }
+    }
+    else{
+        console.log("A route is already active!")
+    }
+}
+
+load_routes = document.getElementById('load_routes');
+load_routes.addEventListener('click', start_route);
+//routes section end
+
 
 
 

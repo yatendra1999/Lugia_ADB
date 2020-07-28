@@ -36,3 +36,7 @@ Teleport:
 
 Devices:
 ![image](files/devices.png)
+
+Routes:
+![image](files/routes_active.png)
+![image](files/routes_options.png)

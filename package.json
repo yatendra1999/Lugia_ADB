@@ -1,6 +1,6 @@
 {
   "name": "Lugia_ADB",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "ADB coordinates bot",
   "main": "main.js",
   "scripts": {

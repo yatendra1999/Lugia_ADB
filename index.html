@@ -21,6 +21,7 @@
                 About
             </button>
         </nav>
+        <p id="global_coords" style="display: none;">-1</p>
 
         <div class="jumbotron jumbotron-fluid", id='teleport_section'>
             <div class="progress", id="cooldown_bar", style="display: none;">
@@ -83,9 +84,26 @@
 
         <div class="jumbotron jumbotron-fluid", id='routes_section'>
             <div class="container">
-                <h1 class="display-4">Routes</h1>
-                <p class="lead">Using special routes for field quests.</p>
-                <h4>Coming Soon</h4>
+                <p style="display: none;" id="route_active">false</p>
+                <div class="card text-center">
+                    <div class="card-header">
+                        <button type="button" class="btn btn-dark" id="load_routes">Load routes</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="progress">
+                            <div class="progress-bar" id="route_cooldown_bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="display: none">Cooldown</div>
+                        </div>
+                        <h5 id="route_next_stop_info">Next Stop: N/A</h5>
+                        <nav class="navbar navbar-expand-lg">
+                            <button type="button" class="btn btn-danger" id="route_cancel" style="display: none">End Route</button>
+                            <button type="button" class="btn btn-warning" id="route_skip_next" style="display: none">Skip Stop</button>
+                            <button type="button" class="btn btn-success" id="route_jump_next" style="display: none">Next Stop</button>
+                        </nav>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <p id="route_current_location">N/A</p>
+                    </div>
+                </div>
                 <br>
                 <br>
                 <br>
