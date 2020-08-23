@@ -7,6 +7,65 @@ const fs = require('fs');
 const { count } = require('console');
 
 
+//utils
+
+function get_rads(deg){
+    return ((deg* Math.PI)/ 180);
+}
+
+function get_dist(current_coord, next_coord){
+    dist = 0;
+    lat1 = current_coord[0];
+    lon1 = current_coord[1];
+    lat2 = next_coord[0];
+    lon2 = next_coord[1];
+    radius = 6371;
+
+    dlat = get_rads(lat2-lat1);
+    dlon = get_rads(lon2-lon1);
+    a = Math.sin(dlat/2);
+    a = a*a;
+    b = Math.sin(dlon/2);
+    b = b*b;
+    b = Math.cos(get_rads(lat1)) * Math.cos(get_rads(lat2)) * b;
+    a = a + b
+    c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+    d = radius * c
+
+    console.log("Distance : " + d);
+    return d
+}
+
+function get_cd_from_dist(dist){
+    cd_dict = {1:30,5:120,10:360,25:660,30:840,65:1320,81:1500,100:2100,250:2700,500:3600,750:4680,1000:5400,1500:7200};
+    d_list = [1,5,10,25,30,65,81,100,250,500,750,1000,1500];
+    dist = Math.ceil(dist)
+    for(i=0; i<d_list.length; i++){
+        if(dist <= d_list[i]){
+            return cd_dict[d_list[i]];
+        }
+    }
+    return 7200
+}
+
+function get_cd(current_coord, next_coord){
+    console.log(current_coord, next_coord);
+    curr = current_coord.split(',');
+    curr[0] = parseFloat(curr[0]);
+    curr[1] = parseFloat(curr[1]);
+    next = next_coord.split(',');
+    next[0] = parseFloat(next[0]);
+    next[1] = parseFloat(next[1]);
+    console.log(curr, next);
+    dist = get_dist(curr, next);
+    cd = get_cd_from_dist(dist)
+    console.log("calculated CD : " + cd);
+    return cd
+}
+
+
+
+
 // devices section start
 function set_info(element){
     var device_id = element.id;
@@ -193,54 +252,38 @@ form.addEventListener('submit',function(event){
 
         }
         else{
-            let options = {
-                mode: 'text',
-                pythonOptions: ['-u']
-            };
-            console.log(options)
-            if(current_coords == "-1"){
-                current_coords = entered_coords;
-            }
-            options.args = ['getcd', entered_coords, current_coords]
-            console.log(options.args)
-            fly_path = path.join(__dirname,"fly.py")
-            PythonShell.run(fly_path, options, function(err, results){
-                if (err) throw err;
-                console.log(results);
-                cd = JSON.parse(results[0]);
-                cd = cd.cooldown;
-                cd = cd * 10;
-                let counter = 0;
-                // console.log(cd)
-                cd_bar = document.getElementById('cooldown_bar');
-                cd_bar.style.display = 'flex';
-                var per = 0
+            cd = get_cd(entered_coords, current_coords);
+            cd = cd * 10;
+            let counter = 0;
+            // console.log(cd)
+            cd_bar = document.getElementById('cooldown_bar');
+            cd_bar.style.display = 'flex';
+            var per = 0
+            cd_bar.style.width = per+"%";
+            function update_progress(){
                 cd_bar.style.width = per+"%";
-                function update_progress(){
-                    cd_bar.style.width = per+"%";
-                    per += 1;
-                    console.log("progress: "+per+"%");
-                    if(per<100){
-                        setTimeout(update_progress,cd);
-                    }
-                    else{
-                        current_coords = entered_coords;
-                        temp = current_coords.split(',');
-                        console.log("Cooldown over!")
-                        document.getElementById("curr_lat").innerText = "Latitude : " + temp[0];
-                        document.getElementById("curr_lon").innerText = "Longitude : " + temp[1];
-                        cd_bar.style.display = 'none';
-                        fly_command = cmd_path+"adb -s " + active_device + " shell am start-foreground-service -a theappninjas.gpsjoystick.TELEPORT --ef lat " + temp[0] + " --ef lng " + temp[1];
-                        child = exec(fly_command, function(err, stdout, stderr){
-                            if (err) throw err;
-                            console.log(stdout);
-                        })
-                        document.getElementById("global_coords").innerHTML = current_coords;
-                        document.getElementById("route_current_location").innerHTML = "Current coords: "+current_coords;
-                    }
+                per += 1;
+                console.log("progress: "+per+"%");
+                if(per<100){
+                    setTimeout(update_progress,cd);
                 }
-                setTimeout(update_progress,cd);
-            })
+                else{
+                    current_coords = entered_coords;
+                    temp = current_coords.split(',');
+                    console.log("Cooldown over!")
+                    document.getElementById("curr_lat").innerText = "Latitude : " + temp[0];
+                    document.getElementById("curr_lon").innerText = "Longitude : " + temp[1];
+                    cd_bar.style.display = 'none';
+                    fly_command = cmd_path+"adb -s " + active_device + " shell am start-foreground-service -a theappninjas.gpsjoystick.TELEPORT --ef lat " + temp[0] + " --ef lng " + temp[1];
+                    child = exec(fly_command, function(err, stdout, stderr){
+                        if (err) throw err;
+                        console.log(stdout);
+                    })
+                    document.getElementById("global_coords").innerHTML = current_coords;
+                    document.getElementById("route_current_location").innerHTML = "Current coords: "+current_coords;
+                }
+            }
+            setTimeout(update_progress,cd);
         }
     }
     else{
@@ -318,52 +361,41 @@ function jump_next(coord_list, count){
         // console.log(count-1);
         // console.log(last_coord);
         next_coord = coord_list[count];
-    
-        let options = {
-            mode: 'text',
-            pythonOptions: ['-u']
-        };
-        options.args = ['getcd', last_coord, next_coord];
-        fly_path = path.join(__dirname,"fly.py");
-    
-        PythonShell.run(fly_path, options, function(err, results){
-            if(err) throw err;
-            cd = JSON.parse(results[0]);
-            cd = cd.cooldown;
-            cd = cd * 10;
-            cd_bar = document.getElementById('route_cooldown_bar');
-            cd_bar.style.display = 'flex';
-            var per = 0;
+        
+        cd = get_cd(last_coord, next_coord);
+        cd = cd * 10;
+        cd_bar = document.getElementById('route_cooldown_bar');
+        cd_bar.style.display = 'flex';
+        var per = 0;
+        cd_bar.style.width = per+"%";
+        function update_progress(){
             cd_bar.style.width = per+"%";
-            function update_progress(){
-                cd_bar.style.width = per+"%";
-                per += 1;
-                console.log("progress: "+per+"%");
-                if(per<100){
-                    setTimeout(update_progress,cd);
-                }
-                else{
-                    temp = next_coord.split(',');
-                    console.log("Cooldown over!")
-                    cd_bar.style.display = 'none';
-                    fly_command = cmd_path+"adb -s " + active_device + " shell am start-foreground-service -a theappninjas.gpsjoystick.TELEPORT --ef lat " + temp[0] + " --ef lng " + temp[1];
-                    child = exec(fly_command, function(err, stdout, stderr){
-                        if (err) throw err;
-                        // console.log(stdout);
-                    })
-                    document.getElementById("global_coords").innerHTML = next_coord;
-                    child.on('exit', function(){
-                        count = count + 1;
-                        set_cooldown(coord_list, count);
-                        document.getElementById("route_current_location").innerHTML = "Current coords: " + next_coord;
-                        temp = next_coord.split(',');
-                        document.getElementById("curr_lat").innerText = "Latitude : " + temp[0];
-                        document.getElementById("curr_lon").innerText = "Longitude : " + temp[1];
-                    })
-                }
+            per += 1;
+            console.log("progress: "+per+"%");
+            if(per<100){
+                setTimeout(update_progress,cd);
             }
-            setTimeout(update_progress,cd);
-        })
+            else{
+                temp = next_coord.split(',');
+                console.log("Cooldown over!")
+                cd_bar.style.display = 'none';
+                fly_command = cmd_path+"adb -s " + active_device + " shell am start-foreground-service -a theappninjas.gpsjoystick.TELEPORT --ef lat " + temp[0] + " --ef lng " + temp[1];
+                child = exec(fly_command, function(err, stdout, stderr){
+                    if (err) throw err;
+                    // console.log(stdout);
+                })
+                document.getElementById("global_coords").innerHTML = next_coord;
+                child.on('exit', function(){
+                    count = count + 1;
+                    set_cooldown(coord_list, count);
+                    document.getElementById("route_current_location").innerHTML = "Current coords: " + next_coord;
+                    temp = next_coord.split(',');
+                    document.getElementById("curr_lat").innerText = "Latitude : " + temp[0];
+                    document.getElementById("curr_lon").innerText = "Longitude : " + temp[1];
+                })
+            }
+        }
+        setTimeout(update_progress,cd);
     }
     else{
         exit_route();
