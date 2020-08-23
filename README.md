@@ -1,6 +1,9 @@
 # Lugia_ADB
 Application to control android device through ADB
 
+# Get involved
+Join our [discord](https://discord.gg/wKzARka "Discord Invite") to know report bugs, request features, and more.
+
 # How to setup
 To run this your android device must have android debugging enabled in developer settings.
 Also App Ninja's joystick application must be installed on your device.
