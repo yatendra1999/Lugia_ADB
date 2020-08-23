@@ -1,6 +1,5 @@
 const {remote, Tray, shell} = require('electron');
 const dialog = remote.dialog;
-const {PythonShell} = require('python-shell');
 const path = require('path');
 const exec = require('child_process').exec;
 const fs = require('fs');

@@ -60,6 +60,5 @@
     "electron-builder": "^22.7.0"
   },
   "dependencies": {
-    "python-shell": "^2.0.1"
   }
 }
