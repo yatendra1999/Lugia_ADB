@@ -225,6 +225,15 @@ refresh_adb.addEventListener('click',refresh_devices);
 
 // complete fly section javascript is managed here
 
+function disable_fly(){
+    document.getElementById('teleport_button').disabled = true;
+}
+
+function enable_fly(){
+    document.getElementById('teleport_button').disabled = false;
+}
+
+
 const form = document.getElementById("Fly-coord")
 form.addEventListener('submit',function(event){
     current_coords = document.getElementById("global_coords").innerHTML;
@@ -252,6 +261,11 @@ form.addEventListener('submit',function(event){
 
         }
         else{
+            disable_fly();
+            disable_coords_loading();
+            if(current_coords == "-1"){
+                current_coords = entered_coords;
+            }
             cd = get_cd(entered_coords, current_coords);
             cd = cd * 10;
             let counter = 0;
@@ -281,6 +295,8 @@ form.addEventListener('submit',function(event){
                     })
                     document.getElementById("global_coords").innerHTML = current_coords;
                     document.getElementById("route_current_location").innerHTML = "Current coords: "+current_coords;
+                    enable_fly();
+                    enable_coords_loading();
                 }
             }
             setTimeout(update_progress,cd);
@@ -299,6 +315,14 @@ form.addEventListener('submit',function(event){
 
 
 //routes section start
+
+function disable_coords_loading(){
+    document.getElementById('load_routes').disabled = true;
+}
+
+function enable_coords_loading(){
+    document.getElementById('load_routes').disabled = false;
+}
 
 function unhide_options(){
     document.getElementById('route_cancel').style.display = "inline-block";
@@ -330,7 +354,8 @@ function exit_route(){
     console.log("Exiting the route")
     hide_options();
     document.getElementById('route_active').innerHTML = 'false';
-    document.getElementById('load_routes').disabled = false;
+    enable_coords_loading();
+    enable_fly();
     document.getElementById("route_next_stop_info").innerHTML = "Next Stop : N/A";
 }
 
@@ -460,7 +485,8 @@ function start_route(){
     if(document.getElementById('route_active').innerHTML == "false"){
         file = dialog.showOpenDialogSync();
         if(file){
-            document.getElementById('load_routes').disabled = true;
+            disable_coords_loading();
+            disable_fly();
             console.log(file);
             file = file[0];
             coord_list = fs.readFileSync(file, {encoding:'utf-8', flag:'r'});
