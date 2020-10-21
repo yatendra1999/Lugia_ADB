@@ -1,4 +1,4 @@
-# Lugia_ADB
+# Lugia ADB
 Application to control android device through ADB
 
 # Get involved
