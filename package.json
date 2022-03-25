@@ -56,7 +56,7 @@
   },
   "homepage": "https://github.com/yatendra1999/Lugia_ADB#readme",
   "devDependencies": {
-    "electron": "^9.4.0",
+    "electron": "^13.6.6",
     "electron-builder": "^22.7.0"
   },
   "dependencies": {
